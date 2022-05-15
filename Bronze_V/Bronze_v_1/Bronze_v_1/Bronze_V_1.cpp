@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <string.h>
 
@@ -118,6 +120,62 @@ int Devide(char* pszFirstNum, char* pszSecNum, char* pszQuotient)
 	return 0;
 }
 
+char* TestMax(char* pszFirstNum, char* pszSecNum)
+{
+	for (int i = 0; i < strlen(pszFirstNum); i++)
+	{
+		if (pszFirstNum[i] < pszSecNum[i])
+			return pszSecNum;
+		if (pszFirstNum[i] > pszSecNum[i])
+			return pszFirstNum;
+	}
+	return pszFirstNum;
+}
+
+void TestSubtract(char* pszFirstNum, char* pszSecNum)
+{
+	for (int i = 0; i < strlen(pszSecNum); i++)
+	{
+		pszFirstNum[i] = pszFirstNum[i] - pszSecNum[i] + '0';
+		if (pszFirstNum[i] < '0')
+		{
+			pszFirstNum[i] = pszFirstNum[i] + 10;
+			pszFirstNum[i - 1]--;
+		}
+	}
+	for (int i = strlen(pszSecNum) - 1; i >= 0; i--)
+	{
+		if (pszFirstNum[i] < '0')
+		{
+			pszFirstNum[i] = pszFirstNum[i] + 10;
+			pszFirstNum[i - 1]--;
+		}
+	}
+}
+
+void TestDevideSubtract(char* pszFirstNum, char* pszSecNum, char* pszQuotient, int index)
+{
+	pszQuotient[index] = '0';
+
+	while (pszFirstNum[index - 1] > '0' || TestMax(pszFirstNum + index, pszSecNum) == pszFirstNum + index)
+	{
+		TestSubtract(pszFirstNum + index, pszSecNum);
+		++pszQuotient[index];
+	}
+}
+
+void TestDevide(char* pszFirstNum, char* pszSecNum, char* pszQuotient)
+{
+	int index = 0;
+	int digit = strlen(pszFirstNum) - strlen(pszSecNum);
+
+
+	while (index <= digit)
+		TestDevideSubtract(pszFirstNum, pszSecNum, pszQuotient, index++);
+		
+	pszQuotient[index] = '\0';
+}
+
 int main()
 {
 	char szMoney[1001] = { 0 };
@@ -128,13 +186,13 @@ int main()
 
 	scanf("%s %s", szMoney, szNum);
 
-	if (!strcmp(szMoney, szNum))
-		printf("1\n0\n");
-	else if (!strcmp(szNum, "1"))
-		printf("%s\n0\n", szMoney);
-	else
-	{
-		Devide(szMoney, szNum, szQuotient);
+	//if (!strcmp(szMoney, szNum))
+	//	printf("1\n0\n");
+	//else if (!strcmp(szNum, "1"))
+	//	printf("%s\n0\n", szMoney);
+	//else
+	//{
+		TestDevide(szMoney, szNum, szQuotient);
 
 		while ('0' == szMoney[iIndex])
 			iIndex++;
@@ -150,7 +208,7 @@ int main()
 
 
 		printf("%s\n%s\n", szQuotient + iQindex, szMoney + iIndex);
-	}
+	//}
 
 	return 0;
 }
